@@ -28,7 +28,8 @@ class Configuration implements ConfigurationInterface
             ->scalarNode('ca')->defaultNull()->end()
             ->booleanNode('handleLogoutRequest')->defaultValue(false)->end()
             ->scalarNode('casLogoutTarget')->defaultNull()->end()
-			->booleanNode('force')->defaultValue(true)->end()
+            ->booleanNode('force')->defaultValue(true)->end()
+            ->booleanNode('LogoutReferer')->defaultValue(true)->end()
             ->end();
 
         return $treeBuilder;
