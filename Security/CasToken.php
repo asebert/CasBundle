@@ -4,12 +4,15 @@ namespace L3\Bundle\CasBundle\Security;
 
 use Symfony\Component\Security\Core\Authentication\Token\AbstractToken;
 
-class CasToken extends AbstractToken {
+class CasToken extends AbstractToken
+{
 
-    public function __construct(array $roles = array()) {
+    public function __construct(array $roles = array())
+    {
         parent::__construct($roles);
 
         $this->setAuthenticated(count($roles) > 0);
+
     }
 
     /**
@@ -17,8 +20,9 @@ class CasToken extends AbstractToken {
      *
      * @return mixed The user credentials
      */
-    public function getCredentials() {
+    public function getCredentials()
+    {
         return '';
     }
 
-} 
+}
