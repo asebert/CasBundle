@@ -29,6 +29,12 @@ class CasListener implements ListenerInterface
         if (!isset($_SESSION)) {
             session_start();
         }
+        
+        $agent = $event->getRequest()->headers->get('User-Agent');
+        $facebook = false;
+        if (strpos($agent, 'facebookexternalhit') !== false || strpos($agent, 'Facebot') !== false ) {
+            $facebook = true;
+        }
 
         \phpCAS::setDebug(false);
         \phpCas::client(CAS_VERSION_2_0, $this->getParameter('host'), $this->getParameter('port'), is_null($this->getParameter('path')) ? '' : $this->getParameter('path'), true);
@@ -48,12 +54,12 @@ class CasListener implements ListenerInterface
         } else {
             \phpCAS::handleLogoutRequests(false);
         }
-        if ($this->getParameter('force')) {
+        if ($this->getParameter('force') && $facebook == false) {
             \phpCAS::forceAuthentication();
             $force = true;
         } else {
             $force = false;
-            if (!isset($_SESSION['cas_user'])) {
+            if (!isset($_SESSION['cas_user'] && $facebook == false)) {
                 $auth = \phpCAS::checkAuthentication();
                 if ($auth) {
                     $_SESSION['cas_user'] = \phpCAS::getUser();
@@ -61,6 +67,8 @@ class CasListener implements ListenerInterface
                     $_SESSION['cas_user'] = false;
                 }
 
+            } else {
+                $_SESSION['cas_user'] = false;
             }
         }
 
