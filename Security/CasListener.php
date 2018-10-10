@@ -31,10 +31,7 @@ class CasListener implements ListenerInterface
         }
         
         $agent = $event->getRequest()->headers->get('User-Agent');
-        $facebook = false;
-        if (strpos($agent, 'facebookexternalhit') !== false || strpos($agent, 'Facebot') !== false ) {
-            $facebook = true;
-        }
+        $bot = $this->bot($agent);
 
         \phpCAS::setDebug(false);
         \phpCas::client(CAS_VERSION_2_0, $this->getParameter('host'), $this->getParameter('port'), is_null($this->getParameter('path')) ? '' : $this->getParameter('path'), true);
@@ -54,12 +51,12 @@ class CasListener implements ListenerInterface
         } else {
             \phpCAS::handleLogoutRequests(false);
         }
-        if ($this->getParameter('force') && $facebook == false) {
+        if ($this->getParameter('force') && $bot == false) {
             \phpCAS::forceAuthentication();
             $force = true;
         } else {
             $force = false;
-            if (!isset($_SESSION['cas_user'] && $facebook == false)) {
+            if (!isset($_SESSION['cas_user'] && $bot == false)) {
                 $auth = \phpCAS::checkAuthentication();
                 if ($auth) {
                     $_SESSION['cas_user'] = \phpCAS::getUser();
@@ -127,4 +124,46 @@ class CasListener implements ListenerInterface
         session_destroy();
 
     }
+    
+
+/**
+ * Check if the given user agent string is one of a crawler, spider, or bot.
+ *
+ * @param string $user_agent
+ *   A user agent string (e.g. Googlebot/2.1 (+http://www.google.com/bot.html))
+ *
+ * @return bool
+ *   TRUE if the user agent is a bot, FALSE if not.
+ */
+public function bot($user_agent) {
+  // User lowercase string for comparison.
+  $user_agent = strtolower($user_agent);
+  // A list of some common words used only for bots and crawlers.
+  $bot_identifiers = array(
+    'bot',
+    'slurp',
+    'yandex',
+    'embedly',
+    'link',
+    'outbrain',
+    'w3c',
+    'vkshare',  
+    'crawler',
+    'spider',
+    'baiduspider',
+    'curl',
+    'rogerbot',  
+    'facebook',
+    'fetch',
+  );
+  // See if one of the identifiers is in the UA string.
+  foreach ($bot_identifiers as $identifier) {
+    if (strpos($user_agent, $identifier) !== FALSE) {
+      return TRUE;
+    }
+  }
+  return FALSE;
+}
+
+
 }
