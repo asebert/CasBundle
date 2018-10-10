@@ -56,7 +56,7 @@ class CasListener implements ListenerInterface
             $force = true;
         } else {
             $force = false;
-            if (!isset($_SESSION['cas_user'] && $bot == false)) {
+            if (!isset($_SESSION['cas_user']) && $bot == false) {
                 $auth = \phpCAS::checkAuthentication();
                 if ($auth) {
                     $_SESSION['cas_user'] = \phpCAS::getUser();
