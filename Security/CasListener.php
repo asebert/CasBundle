@@ -64,9 +64,7 @@ class CasListener implements ListenerInterface
                     $_SESSION['cas_user'] = false;
                 }
 
-            } else {
-                $_SESSION['cas_user'] = false;
-            }
+            } 
         }
 
         if (!$force) {
