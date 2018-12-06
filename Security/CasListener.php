@@ -68,7 +68,7 @@ class CasListener implements ListenerInterface
         }
 
         if (!$force) {
-            if (!$_SESSION['cas_user']) {
+            if (!isset($_SESSION['cas_user'])) {
                 $token = new CasToken(array('ROLE_ANON'));
                 $token->setUser('__NO_USER__');
             } else {
